@@ -1,4 +1,4 @@
-import json, jwt, bcrypt
+import json, re, jwt, bcrypt
 
 from django.views import View
 from django.http import JsonResponse
@@ -52,7 +52,7 @@ class SigninView(View):
         data = json.loads(request.body)
 
         try:
-            if not User.objects.filter(email=data["email"]).exist():
+            if not User.objects.filter(email=data["email"]).exists():
                 return JsonResponse({"MESSAGE": "INVALID_USER"}, status=401)
 
             user = User.objects.get(email=data["email"])
@@ -62,7 +62,7 @@ class SigninView(View):
             ):
                 return JsonResponse({"MESSAGE": "PASSWORD ERROR"}, status=401)
 
-            access_token = jwt.encode({"id": user.id}, SECRET_KEY, algorithm="HS256")
+            access_token = jwt.encode({"id": user.id}, SECRET_KEY, algorithm=ALGORITHM)
             return JsonResponse(
                 {"MESSAGE": "SUCCESS", "token": access_token}, status=200
             )
