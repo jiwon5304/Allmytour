@@ -7,100 +7,131 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('makers', '0001_initial'),
+        ("makers", "0001_initial"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='Avaliable_schedule',
+            name="Avaliable_schedule",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('schedule', models.CharField(max_length=45)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("schedule", models.CharField(max_length=45)),
             ],
             options={
-                'db_table': 'avaliable_schdules',
+                "db_table": "avaliable_schdules",
             },
         ),
         migrations.CreateModel(
-            name='Avaliable_service',
+            name="Avaliable_service",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('service', models.CharField(max_length=45)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("service", models.CharField(max_length=45)),
             ],
             options={
-                'db_table': 'avaliable_services',
+                "db_table": "avaliable_services",
             },
         ),
         migrations.AddField(
-            model_name='maker',
-            name='have_car',
+            model_name="maker",
+            name="have_car",
             field=models.BooleanField(default=False),
         ),
         migrations.AddField(
-            model_name='maker',
-            name='passenger_limit',
+            model_name="maker",
+            name="passenger_limit",
             field=models.IntegerField(blank=True, null=True),
         ),
         migrations.AlterField(
-            model_name='maker',
-            name='account_number',
+            model_name="maker",
+            name="account_number",
             field=models.IntegerField(blank=True, null=True),
         ),
         migrations.AlterField(
-            model_name='maker',
-            name='bankbook_image',
-            field=models.ImageField(blank=True, null=True, upload_to=''),
+            model_name="maker",
+            name="bankbook_image",
+            field=models.ImageField(blank=True, null=True, upload_to=""),
         ),
         migrations.AlterField(
-            model_name='maker',
-            name='category',
-            field=models.ManyToManyField(blank=True, to='makers.Category'),
+            model_name="maker",
+            name="category",
+            field=models.ManyToManyField(blank=True, to="makers.Category"),
         ),
         migrations.AlterField(
-            model_name='maker',
-            name='idcard',
-            field=models.ImageField(blank=True, null=True, upload_to=''),
+            model_name="maker",
+            name="idcard",
+            field=models.ImageField(blank=True, null=True, upload_to=""),
         ),
         migrations.AlterField(
-            model_name='maker',
-            name='language',
-            field=models.ManyToManyField(blank=True, to='makers.Language'),
+            model_name="maker",
+            name="language",
+            field=models.ManyToManyField(blank=True, to="makers.Language"),
         ),
         migrations.AlterField(
-            model_name='maker',
-            name='profile',
-            field=models.ImageField(blank=True, null=True, upload_to=''),
+            model_name="maker",
+            name="profile",
+            field=models.ImageField(blank=True, null=True, upload_to=""),
         ),
         migrations.AlterField(
-            model_name='maker',
-            name='region',
-            field=models.ManyToManyField(blank=True, to='makers.Region'),
+            model_name="maker",
+            name="region",
+            field=models.ManyToManyField(blank=True, to="makers.Region"),
         ),
         migrations.AlterField(
-            model_name='maker',
-            name='tour',
-            field=models.ManyToManyField(blank=True, through='makers.Maker_tour', to='makers.Tour'),
+            model_name="maker",
+            name="tour",
+            field=models.ManyToManyField(
+                blank=True, through="makers.Maker_tour", to="makers.Tour"
+            ),
         ),
         migrations.CreateModel(
-            name='Contact_channel',
+            name="Contact_channel",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('kind', models.CharField(max_length=45)),
-                ('address', models.CharField(max_length=45)),
-                ('maker', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='makers.maker')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("kind", models.CharField(max_length=45)),
+                ("address", models.CharField(max_length=45)),
+                (
+                    "maker",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE, to="makers.maker"
+                    ),
+                ),
             ],
             options={
-                'db_table': 'contact_channels',
+                "db_table": "contact_channels",
             },
         ),
         migrations.AddField(
-            model_name='maker',
-            name='avaliable_schedule',
-            field=models.ManyToManyField(blank=True, to='makers.Avaliable_schedule'),
+            model_name="maker",
+            name="avaliable_schedule",
+            field=models.ManyToManyField(blank=True, to="makers.Avaliable_schedule"),
         ),
         migrations.AddField(
-            model_name='maker',
-            name='avaliable_service',
-            field=models.ManyToManyField(blank=True, to='makers.Avaliable_service'),
+            model_name="maker",
+            name="avaliable_service",
+            field=models.ManyToManyField(blank=True, to="makers.Avaliable_service"),
         ),
     ]
