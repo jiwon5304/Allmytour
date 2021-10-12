@@ -47,7 +47,7 @@ class SignUpView(View):
             return JsonResponse({"message": "DATA_TOO_LONG"}, status=400)
 
 
-class SigninView(View):
+class LoginView(View):
     def post(self, request):
         data = json.loads(request.body)
 
