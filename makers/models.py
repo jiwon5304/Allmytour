@@ -21,8 +21,8 @@ class Maker(TimeStamp):
     tour = models.ManyToManyField("Tour", through="Maker_tour", blank=True)
     have_car = models.BooleanField(default=False)
     passenger_limit = models.IntegerField(null=True, blank=True)
-    avaliable_schedule = models.ManyToManyField("Avaliable_schedule", blank=True)
-    avaliable_service = models.ManyToManyField("Avaliable_service", blank=True)
+    available_schedule = models.ManyToManyField("Available_schedule", blank=True)
+    available_service = models.ManyToManyField("Available_service", blank=True)
 
     class Meta:
         db_table = "makers"
@@ -93,15 +93,15 @@ class Contact_channel(models.Model):
         db_table = "contact_channels"
 
 
-class Avaliable_schedule(models.Model):
+class Available_schedule(models.Model):
     schedule = models.CharField(max_length=45)
 
     class Meta:
-        db_table = "avaliable_schdules"
+        db_table = "available_schdules"
 
 
-class Avaliable_service(models.Model):
+class Available_service(models.Model):
     service = models.CharField(max_length=45)
 
     class Meta:
-        db_table = "avaliable_services"
+        db_table = "available_services"
