@@ -35,7 +35,6 @@ class SignUpView(View):
                 password=decoded_password,
                 email=data["email"],
                 phone=data["phone"],
-                is_maker=data["is_maker"],
                 agree_service=data["agree_service"],
                 agree_maketing=data["agree_maketing"],
             )
