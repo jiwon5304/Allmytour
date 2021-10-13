@@ -6,10 +6,10 @@ class Maker(TimeStamp):
     makername = models.CharField(max_length=40)
     user = models.ForeignKey("users.User", on_delete=models.CASCADE)
     makernickname = models.CharField(max_length=40)
-    profile = models.ImageField(null=True, blank=True, upload_to="profile")
+    profile = models.ImageField(null=True, blank=True, upload_to="profile/")
     introduce = models.TextField()
-    idcard = models.ImageField(null=True, blank=True, upload_to="idcard")
-    bankbook_image = models.ImageField(null=True, blank=True, upload_to="bankbook")
+    idcard = models.ImageField(null=True, blank=True, upload_to="idcard/")
+    bankbook_image = models.ImageField(null=True, blank=True, upload_to="bankbook/")
     status = models.CharField(max_length=40)
     bank = models.CharField(max_length=45)
     account_number = models.IntegerField(null=True, blank=True)
@@ -39,7 +39,11 @@ class Sns(models.Model):
 
 class Evidence(models.Model):
     kind = models.CharField(max_length=45)
+<<<<<<< HEAD
     image = models.ImageField(upload_to="evidence")
+=======
+    image = models.ImageField(upload_to="evidence/")
+>>>>>>> 4e8073bcfba104b2e9e41ee960e2a3de0b9ff833
     maker = models.ForeignKey("Maker", on_delete=models.CASCADE)
 
     class Meta:
