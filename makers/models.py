@@ -39,11 +39,7 @@ class Sns(models.Model):
 
 class Evidence(models.Model):
     kind = models.CharField(max_length=45)
-<<<<<<< HEAD
-    image = models.ImageField(upload_to="evidence")
-=======
     image = models.ImageField(upload_to="evidence/")
->>>>>>> 4e8073bcfba104b2e9e41ee960e2a3de0b9ff833
     maker = models.ForeignKey("Maker", on_delete=models.CASCADE)
 
     class Meta:
