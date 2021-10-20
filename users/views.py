@@ -6,6 +6,7 @@ from django.db.utils import DataError
 
 from .models import User
 from my_settings import SECRET_KEY, ALGORITHM
+from .decorator import login_decorator
 
 
 class SignUpView(View):
@@ -87,3 +88,21 @@ class DoubleCheckEmailView(View):
 
         except KeyError:
             return JsonResponse({"MESSAGE": "KEY_ERROR"}, status=400)
+
+
+class MypageView(View):
+    @login_decorator
+    def get(self, request):
+        user = request.user
+
+        result = {
+            "email": user.email,
+            "name": user.name,
+            "phone": user.phone,
+            "password": user.password,
+            "is_maker": user.is_maker,
+            "agree_service": user.agree_service,
+            "agree_maketing": user.agree_marketing,
+        }
+
+        return JsonResponse({"Result": result}, status=200)
