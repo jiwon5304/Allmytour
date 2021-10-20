@@ -69,3 +69,22 @@ class LoginView(View):
 
         except KeyError:
             return JsonResponse({"MESSAGE": "KEY_ERROR"}, status=400)
+
+
+class DoubleCheckEmailView(View):
+    def post(self, request):
+        data = json.loads(request.body)
+
+        email_format = re.compile("\w+[@]\w+[.]\w+")
+
+        try:
+            if not email_format.search(data["email"]):
+                return JsonResponse({"message": "INVALID_EMAIL_FORMAT"}, status=400)
+
+            if User.objects.filter(email=data["email"]).exists():
+                return JsonResponse({"message": "DUPLICATE_EMAIL"}, status=400)
+
+            return JsonResponse({"message": "NOT_DUPLICATE_EMAIL"}, status=200)
+
+        except KeyError:
+            return JsonResponse({"MESSAGE": "KEY_ERROR"}, status=400)
