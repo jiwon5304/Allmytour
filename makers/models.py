@@ -6,10 +6,10 @@ class Maker(TimeStamp):
     makername = models.CharField(max_length=40)
     user = models.ForeignKey("users.User", on_delete=models.CASCADE)
     makernickname = models.CharField(max_length=40)
-    profile = models.ImageField(null=True, blank=True, upload_to="profile/")
+    profile = models.ImageField(upload_to="profile/", null=True, blank=True)
     introduce = models.TextField()
-    idcard = models.ImageField(null=True, blank=True, upload_to="idcard/")
-    bankbook_image = models.ImageField(null=True, blank=True, upload_to="bankbook/")
+    idcard = models.ImageField(upload_to="idcard/", null=True, blank=True)
+    bankbook_image = models.ImageField(upload_to="bankbook/", null=True, blank=True)
     status = models.CharField(max_length=40)
     bank = models.CharField(max_length=45)
     account_number = models.IntegerField(null=True, blank=True)
@@ -77,8 +77,8 @@ class Tour(models.Model):
 class Maker_tour(models.Model):
     tour = models.ForeignKey("Tour", on_delete=models.CASCADE)
     maker = models.ForeignKey("Maker", on_delete=models.CASCADE)
-    limit_people = models.IntegerField()
-    limit_load = models.IntegerField()
+    limit_people = models.IntegerField(default=0)
+    limit_load = models.IntegerField(default=0)
 
     class Meta:
         db_table = "maker_tours"
