@@ -106,3 +106,15 @@ class MypageView(View):
         }
 
         return JsonResponse({"Result": result}, status=200)
+
+
+class PhoneCertificationView(View):
+    def post(self, request):
+        data = json.loads(request.body)
+
+        certification_number = data.get("certification")
+
+        if certification_number == "123456":
+            return JsonResponse({"MESSAGE": "SAME"}, status=200)
+
+        return JsonResponse({"MESSAGE": "DISCORD"}, status=400)
