@@ -10,6 +10,7 @@ from datetime import datetime, timedelta
 from .models import User
 from .decorator import login_decorator
 from my_settings import SECRET_KEY, ALGORITHM
+from .decorator import login_decorator
 
 
 class SignUpView(View):
@@ -185,3 +186,52 @@ class NewPasswordView(View):
 
         except KeyError:
             return JsonResponse({"message": "KEY_ERROR"}, status=400)
+
+
+class DoubleCheckEmailView(View):
+    def post(self, request):
+        data = json.loads(request.body)
+
+        email_format = re.compile("\w+[@]\w+[.]\w+")
+
+        try:
+            if not email_format.search(data["email"]):
+                return JsonResponse({"message": "INVALID_EMAIL_FORMAT"}, status=400)
+
+            if User.objects.filter(email=data["email"]).exists():
+                return JsonResponse({"message": "DUPLICATE_EMAIL"}, status=400)
+
+            return JsonResponse({"message": "NOT_DUPLICATE_EMAIL"}, status=200)
+
+        except KeyError:
+            return JsonResponse({"MESSAGE": "KEY_ERROR"}, status=400)
+
+
+class MypageView(View):
+    @login_decorator
+    def get(self, request):
+        user = request.user
+
+        result = {
+            "email": user.email,
+            "name": user.name,
+            "phone": user.phone,
+            "password": user.password,
+            "is_maker": user.is_maker,
+            "agree_service": user.agree_service,
+            "agree_maketing": user.agree_marketing,
+        }
+
+        return JsonResponse({"Result": result}, status=200)
+
+
+class PhoneCertificationView(View):
+    def post(self, request):
+        data = json.loads(request.body)
+
+        certification_number = data.get("certification")
+
+        if certification_number == "123456":
+            return JsonResponse({"MESSAGE": "SAME"}, status=200)
+
+        return JsonResponse({"MESSAGE": "DISCORD"}, status=400)
