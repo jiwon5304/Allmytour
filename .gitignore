@@ -361,8 +361,4 @@ zsdoc/data
 
 my_settings.py
 *.csv
-<<<<<<< HEAD
 __pycache__/
-=======
-__pycache__/
->>>>>>> 4e8073bcfba104b2e9e41ee960e2a3de0b9ff833

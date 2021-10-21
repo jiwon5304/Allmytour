@@ -10,6 +10,7 @@ class User(TimeStamp):
     is_maker = models.BooleanField(default=False)
     agree_service = models.BooleanField(default=False)
     agree_maketing = models.BooleanField(default=False)
+    auth_number = models.CharField(max_length=20, blank=True)
 
     class Meta:
         db_table = "users"
