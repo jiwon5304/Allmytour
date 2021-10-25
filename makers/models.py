@@ -8,25 +8,6 @@ class Maker(TimeStamp):
         "users.User", on_delete=models.CASCADE, null=True, blank=True
     )
     makernickname = models.CharField(max_length=40)
-<<<<<<< HEAD
-    profile = models.ImageField(upload_to="profile/", null=True, blank=True)
-    introduce = models.TextField()
-    idcard = models.ImageField(upload_to="idcard/", null=True, blank=True)
-    bankbook_image = models.ImageField(upload_to="bankbook/", null=True, blank=True)
-    status = models.CharField(max_length=40)
-    bank = models.CharField(max_length=45)
-    account_number = models.IntegerField(null=True, blank=True)
-    account_holder = models.CharField(max_length=45)
-    productform = models.CharField(max_length=45)
-    language = models.ManyToManyField("Language", blank=True)
-    region = models.ManyToManyField("Region", blank=True)
-    category = models.ManyToManyField("Category", blank=True)
-    tour = models.ManyToManyField("Tour", through="Maker_tour", blank=True)
-    have_car = models.BooleanField(default=False)
-    passenger_limit = models.IntegerField(null=True, blank=True)
-    available_schedule = models.ManyToManyField("Available_schedule", blank=True)
-    available_service = models.ManyToManyField("Available_service", blank=True)
-=======
     profile = models.ImageField(null=True, blank=True, upload_to="profile/")
     introduce = models.TextField(null=True, blank=True)
     idcard = models.ImageField(null=True, blank=True, upload_to="idcard/")
@@ -40,7 +21,6 @@ class Maker(TimeStamp):
     region = models.ManyToManyField("Region", null=True, blank=True)
     category = models.ManyToManyField("Category", null=True, blank=True)
     tour = models.ManyToManyField("Tour", through="Maker_tour", null=True, blank=True)
->>>>>>> b829d56a874a7268d8066a0fecf457f48dd9bce2
 
     class Meta:
         db_table = "makers"
@@ -141,16 +121,8 @@ class DraftCategory(models.Model):
         db_table = "draftcategories"
 
 
-<<<<<<< HEAD
-class Maker_tour(models.Model):
-    tour = models.ForeignKey("Tour", on_delete=models.CASCADE)
-    maker = models.ForeignKey("Maker", on_delete=models.CASCADE)
-    limit_people = models.IntegerField(default=0)
-    limit_load = models.IntegerField(default=0)
-=======
 class Tour(models.Model):
     kind = models.CharField(max_length=45, null=True, blank=True)
->>>>>>> b829d56a874a7268d8066a0fecf457f48dd9bce2
 
     class Meta:
         db_table = "tours"

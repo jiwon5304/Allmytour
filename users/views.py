@@ -154,9 +154,6 @@ class AuthenticationView(View):
             )
 
         except KeyError:
-<<<<<<< HEAD
-            return JsonResponse({"MESSAGE": "KEY_ERROR"}, status=400)
-=======
             return JsonResponse({"message": "KEY_ERROR"}, status=400)
 
 
@@ -237,4 +234,3 @@ class PhoneCertificationView(View):
             return JsonResponse({"MESSAGE": "SAME"}, status=200)
 
         return JsonResponse({"MESSAGE": "DISCORD"}, status=400)
->>>>>>> b829d56a874a7268d8066a0fecf457f48dd9bce2
