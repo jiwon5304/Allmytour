@@ -1,11 +1,9 @@
-import json, base64
+import json
 from os import sched_getscheduler
-from django.http.response import HttpResponse, JsonResponse
+from django.http.response import JsonResponse
 
-# from django.shortcuts import render, render_to_response
 from django.core.files.storage import FileSystemStorage
 from django.views import View
-from django.http import FileResponse
 
 from .models import (
     Category,
@@ -22,6 +20,7 @@ from .models import (
     DraftCategory,
     DraftLanguage,
     DraftRegion,
+    DraftEvidence,
 )
 
 
@@ -29,30 +28,27 @@ class MakerApplyView(View):
     def post(self, request):
         try:
             data = json.loads(request.POST["data"])
-            print(data)
             makernickname = data["makernickname"]
             makername = data["makername"]
             introduce = data["introduce"]
-            language = data["language"]
-            sns_address = data["sns_address"]
-            sns_address_list = sns_address.split(",")
-            language_list = language.split(",")
+            languages = data["language"]
+            sns_address_list = data["sns_address"]
             status = data["status"]
             bank = data["bank"]
-            account_number = int(data.get("account_number"))
+            account_number = data.get("account_number")
             account_holder = data["account_holder"]
             productform = data["productform"]
             evidence_kind = data["evidence_kind"]
-            region = data["region"]
-            category = data["category"]
+            regions = data["region"]
+            categories = data["category"]
             tour_kind = data["tour"]
             limit_people = data["limit_people"]
             limit_load = data["limit_load"]
+
             PROFILE = request.FILES.get("profile")
             IDCARD = request.FILES.get("idcard")
             BANKBOOK = request.FILES.get("bankbook")
             EVIDENCE_IMAGE = request.FILES.get("evidence_image")
-            # 사용언어 배열, sns 배열, 서비스지역, 카테고리, 증빙서류
 
             if PROFILE:
                 uploaded_profile = PROFILE
@@ -80,6 +76,8 @@ class MakerApplyView(View):
                 )
                 uploaded_bankbook_image_url = fs.url(filename)
                 bankbook = uploaded_bankbook_image_url
+            else:
+                bankbook = None
 
             if EVIDENCE_IMAGE:
                 uploaded_evidence = EVIDENCE_IMAGE
@@ -89,6 +87,8 @@ class MakerApplyView(View):
                 filename = fs.save(uploaded_evidence.name, uploaded_evidence)
                 uploaded_evidence_url = fs.url(filename)
                 evidence = uploaded_evidence_url
+            else:
+                evidence = None
 
             if not (makername and makernickname and PROFILE and introduce and IDCARD):
                 return JsonResponse({"MESSAGE": "ENTER_REQUIRED_VALUES"}, status=400)
@@ -108,25 +108,34 @@ class MakerApplyView(View):
                 productform=productform,
             )
 
+            language = Language.objects.create(
+                Language=[language for language in languages]
+            )
+            maker.language.add(language)
+
             Sns.objects.create(
                 maker_id=maker.id,
                 address=[sns_address for sns_address in sns_address_list],
             )
-            Language.objects.create(Language=[language for language in language_list])
 
             Evidence.objects.create(
                 image=evidence, maker_id=maker.id, kind=evidence_kind
             )
 
-            Region.objects.create(region=region)
-            Category.objects.create(name=category)
-            tour = Tour.objects.get(kind=tour_kind)
-            Maker_tour.objects.create(
-                limit_people=limit_people,
-                limit_load=limit_load,
-                tour_id=tour.id,
-                maker_id=maker.id,
-            )
+            region = Region.objects.create(region=[region for region in regions])
+            maker.region.add(region)
+
+            category = Category.objects.create(name=[name for name in categories])
+            maker.category.add(category)
+
+            if Tour.objects.filter(kind=tour_kind).exists():
+                tour = Tour.objects.get(kind=tour_kind)
+                Maker_tour.objects.create(
+                    limit_people=limit_people,
+                    limit_load=limit_load,
+                    tour_id=tour.id,
+                    maker_id=maker.id,
+                )
 
             return JsonResponse({"MESSAGE": "CREATED"}, status=201)
 
@@ -141,21 +150,20 @@ class DraftMakerView(View):
     def post(self, request):
         try:
             data = json.loads(request.POST["data"])
-            makername = data["makername"]
             makernickname = data["makernickname"]
+            makername = data["makername"]
             introduce = data["introduce"]
-            language = data["language"]
-            sns_address = data["sns_address"]
-            sns_address_list = sns_address.split(",")
-            language_list = language.split(",")
+            languages = data["language"]
+            sns_address_list = data["sns_address"]
             status = data["status"]
             bank = data["bank"]
-            account_number = data["account_number"]
+            account_number = data.get("account_number")
+            print(data)
             account_holder = data["account_holder"]
             productform = data["productform"]
             evidence_kind = data["evidence_kind"]
-            region = data["region"]
-            category = data["category"]
+            regions = data["region"]
+            categories = data["category"]
             tour_kind = data["tour"]
             limit_people = data["limit_people"]
             limit_load = data["limit_load"]
@@ -228,16 +236,25 @@ class DraftMakerView(View):
                 maker_id=draftmaker.id,
                 address=[sns_address for sns_address in sns_address_list],
             )
-            DraftLanguage.objects.create(
-                Language=[language for language in language_list]
+            draftlanguage = DraftLanguage.objects.create(
+                Language=[language for language in languages]
             )
+            draftmaker.language.add(draftlanguage)
 
-            Evidence.objects.create(
+            DraftEvidence.objects.create(
                 image=evidence, maker_id=draftmaker.id, kind=evidence_kind
             )
 
-            DraftRegion.objects.create(region=region)
-            DraftCategory.objects.create(name=category)
+            draftregion = DraftRegion.objects.create(
+                region=[region for region in regions]
+            )
+            draftmaker.region.add(draftregion)
+
+            draftcategory = DraftCategory.objects.create(
+                name=[category for category in categories]
+            )
+            draftmaker.category.add(draftcategory)
+
             if DraftTour.objects.filter(kind=tour_kind).exists():
                 drafttour = DraftTour.objects.get(kind=tour_kind)
                 DraftMaker_Drafttour.objects.create(
@@ -250,7 +267,6 @@ class DraftMakerView(View):
             return JsonResponse(
                 {
                     "MESSAGE": "DRAFT_CREATED",
-                    "DraftMaker_ID": draftmaker.id,
                 },
                 status=201,
             )
