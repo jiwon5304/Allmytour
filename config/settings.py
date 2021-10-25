@@ -11,8 +11,8 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 
 from pathlib import Path
-import pymysql, os
-from my_settings import SECRET_KEY, DATABASES
+import pymysql
+from my_settings import SECRET_KEY, DATABASES, GMAIL_ID, GMAIL_PASSWORD
 
 pymysql.install_as_MySQLdb()
 
@@ -159,5 +159,18 @@ CORS_ALLOW_HEADERS = (
     "user-agent",
     "x-csrftoken",
     "x-requested-with",
-    # 만약 허용해야할 추가적인 헤더키가 있다면?(사용자정의 키) 여기에 추가하면 됩니다.
 )
+
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+
+EMAIL_HOST_USER = GMAIL_ID
+
+EMAIL_HOST = "smtp.gmail.com"
+
+EMAIL_PORT = 587
+
+EMAIL_USE_TLS = True
+
+EMAIL_HOST_PASSWORD = GMAIL_PASSWORD
+
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER

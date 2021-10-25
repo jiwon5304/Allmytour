@@ -2,6 +2,8 @@ import jwt
 
 from django.http import JsonResponse
 
+# from datetime import datetime, timedelta
+
 from my_settings import ALGORITHM, SECRET_KEY
 from users.models import User
 
@@ -18,6 +20,9 @@ def login_decorator(func):
 
         except User.DoesNotExist:
             return JsonResponse({"MESSAGE": "INVALID_USER"}, status=400)
+
+        except jwt.ExpiredSignatureError:
+            return JsonResponse({"message": "EXPIRED_TOKEN"}, status=400)
 
         return func(self, request, *args, **kwargs)
 
