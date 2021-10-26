@@ -151,14 +151,10 @@ class DraftMakerView(View):
     def get(self, request):
         try:
             user = request.user
-            maker_id = request.GET.get("id")
 
-            if not maker_id:
-                return JsonResponse({"MESSAGE": "WRONG ID FORMAT"}, status=400)
-
-            maker = DraftMaker.objects.get(id=maker_id, user_id=user)
+            maker = DraftMaker.objects.get(user_id=user.id)
             evidences = DraftEvidence.objects.select_related("maker").filter(
-                maker=maker_id
+                maker__user_id=user.id
             )
 
             result = {
@@ -362,13 +358,11 @@ class MakerReviseView(View):
     def get(self, request):
         try:
             user = request.user
-            maker_id = request.GET.get("id")
 
-            if not maker_id:
-                return JsonResponse({"MESSAGE": "WRONG ID FORMAT"}, status=400)
-
-            maker = Maker.objects.get(id=maker_id, user_id=user.id)
-            evidences = Evidence.objects.select_related("maker").filter(maker=maker_id)
+            maker = Maker.objects.get(user_id=user.id)
+            evidences = Evidence.objects.select_related("maker").filter(
+                maker__user_id=user.id
+            )
 
             result = {
                 "makername": maker.makername,
