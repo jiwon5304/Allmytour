@@ -5,7 +5,7 @@ from django.http.response import JsonResponse
 from django.views import View
 
 from django.core.files.storage import FileSystemStorage
-
+from django.db import transaction
 from users.decorator import login_decorator
 
 from .models import (
@@ -29,6 +29,7 @@ from .models import (
 
 class MakerApplyView(View):
     @login_decorator
+    @transaction.atomic
     def post(self, request):
         try:
             data = json.loads(request.POST["data"])
@@ -37,11 +38,11 @@ class MakerApplyView(View):
             introduce = data["introduce"]
             languages = data["language"]
             sns_address_list = data["sns_address"]
-            status = data["status"]
             bank = data["bank"]
             account_number = data.get("account_number")
             account_holder = data["account_holder"]
             productform = data["productform"]
+            status = data["status"]
             evidence_kind = data["evidence_kind"]
             regions = data["region"]
             categories = data["category"]
@@ -132,6 +133,9 @@ class MakerApplyView(View):
                     tour_id=tour.id,
                     maker_id=maker.id,
                 )
+            user = request.user
+            user.is_maker = True
+            user.save()
 
             return JsonResponse({"MESSAGE": "CREATED"}, status=201)
 
@@ -224,6 +228,7 @@ class DraftMakerView(View):
             return JsonResponse({"MESSAGE": "MAKERS DOES NOT EXISTS"}, status=404)
 
     @login_decorator
+    @transaction.atomic
     def post(self, request):
         try:
             data = json.loads(request.POST["data"])
@@ -333,6 +338,9 @@ class DraftMakerView(View):
                     tour_id=drafttour.id,
                     draftmaker_id=draftmaker.id,
                 )
+            user = request.user
+            user.is_maker = True
+            user.save()
 
             return JsonResponse(
                 {
@@ -350,6 +358,7 @@ class DraftMakerView(View):
 
 class MakerReviseView(View):
     @login_decorator
+    @transaction.atomic
     def get(self, request):
         try:
             user = request.user
@@ -416,6 +425,7 @@ class MakerReviseView(View):
             return JsonResponse({"MESSAGE": "MAKERS DOES NOT EXISTS"}, status=404)
 
     @login_decorator
+    @transaction.atomic
     def post(self, request):
         try:
             user = request.user
