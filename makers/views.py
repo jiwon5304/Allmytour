@@ -10,6 +10,7 @@ from users.decorator import login_decorator
 
 from .models import (
     Category,
+    DraftSns,
     Evidence,
     Maker,
     Maker_tour,
@@ -107,23 +108,23 @@ class MakerApplyView(View):
                 productform=productform,
             )
             for language in languages:
-                language = Language.objects.create(Language=language)
-                maker.language.add(language)
+                Language.objects.get_or_create(Language=language)
+                maker.language.add(Language.objects.get(Language=language).id)
 
             for sns_address in sns_address_list:
-                Sns.objects.create(maker_id=maker.id, address=sns_address)
+                Sns.objects.get_or_create(maker_id=maker.id, address=sns_address)
 
             Evidence.objects.create(
                 image=evidence, maker_id=maker.id, kind=evidence_kind
             )
 
             for region in regions:
-                region = Region.objects.create(region=region)
-                maker.region.add(region)
+                Region.objects.get_or_create(region=region)
+                maker.region.add(Region.objects.get(region=region).id)
 
             for name in categories:
-                category = Category.objects.create(name=name)
-                maker.category.add(category)
+                Category.objects.get_or_create(name=name)
+                maker.category.add(Category.objects.get(name=name).id)
 
             if Tour.objects.filter(kind=tour_kind).exists():
                 tour = Tour.objects.get(kind=tour_kind)
@@ -147,82 +148,6 @@ class MakerApplyView(View):
 
 
 class DraftMakerView(View):
-    @login_decorator
-    def get(self, request):
-        try:
-            user = request.user
-
-            maker = DraftMaker.objects.get(user_id=user.id)
-            evidences = DraftEvidence.objects.select_related("maker").filter(
-                maker__user_id=user.id
-            )
-
-            result = {
-                "makername": maker.makername,
-                "makernickname": maker.makernickname,
-                "introduce": maker.introduce,
-                "evidence": [
-                    {
-                        "evidence_kind": evidence.kind,
-                        "evidence_image": base64.encodebytes(
-                            open(evidence.image.path, "rb").read()
-                        ).decode("utf-8"),
-                        "evidence_name": evidence.image.name,
-                        "evidence_url": evidence.image.url,
-                    }
-                    for evidence in evidences
-                    if evidence.image
-                ],
-                "sns": list(maker.sns_set.values_list("address", flat=True)),
-                "language": list(maker.language.values_list("Language", flat=True)),
-                "category": list(maker.category.values_list("name", flat=True)),
-                "region": list(maker.region.values_list("region", flat=True)),
-                "bank": maker.bank,
-                "account_number": maker.account_number,
-                "account_holder": maker.account_holder,
-                "productform": maker.productform,
-                "tour": list(maker.tour.values_list("kind", flat=True)),
-                "limit_people": Maker_tour.objects.get(maker_id=maker).limit_people,
-                "limit_load": Maker_tour.objects.get(maker_id=maker).limit_load,
-            }
-
-            if maker.profile:
-                result["profile"] = base64.encodebytes(
-                    open(maker.profile.path, "rb").read()
-                ).decode("utf-8")
-                result["profile_name"] = maker.profile.name
-                result["profile_url"] = maker.profile.url
-
-            if maker.idcard:
-                result["idcard"] = base64.encodebytes(
-                    open(maker.idcard.path, "rb").read()
-                ).decode("utf-8")
-                result["idcard_name"] = maker.idcard.name
-                result["idcard_url"] = maker.idcard.url
-
-            if maker.bankbook_image:
-                result["bankbook"] = base64.encodebytes(
-                    open(maker.bankbook_image.path, "rb").read()
-                ).decode("utf-8")
-                result["bankbook_name"] = maker.bankbook_image.name
-                result["bankbook_url"] = maker.bankbook_image.url
-
-            if DraftMaker_Drafttour.objects.filter(
-                maker_id=maker, tour_id__kind="차량투어"
-            ).exists():
-                tour = DraftMaker_Drafttour.objects.get(
-                    maker_id=maker, tour_id__kind="차량투어"
-                )
-                tour_limit = {
-                    "limit_people": tour.limit_people,
-                    "limit_load": tour.limit_load,
-                }
-                result.update(tour_limit)
-
-            return JsonResponse({"MESSAGE": result}, status=200)
-        except DraftMaker.DoesNotExist:
-            return JsonResponse({"MESSAGE": "MAKERS DOES NOT EXISTS"}, status=404)
-
     @login_decorator
     @transaction.atomic
     def post(self, request):
@@ -303,28 +228,26 @@ class DraftMakerView(View):
                 productform=productform,
             )
 
-            Sns.objects.create(
-                maker_id=draftmaker.id,
-                address=[sns_address for sns_address in sns_address_list],
-            )
-            draftlanguage = DraftLanguage.objects.create(
-                Language=[language for language in languages]
-            )
-            draftmaker.language.add(draftlanguage)
+            for language in languages:
+                DraftLanguage.objects.get_or_create(Language=language)
+                draftmaker.language.add(DraftLanguage.objects.get(Language=language).id)
+
+            for sns_address in sns_address_list:
+                DraftSns.objects.get_or_create(
+                    maker_id=draftmaker.id, address=sns_address
+                )
 
             DraftEvidence.objects.create(
                 image=evidence, maker_id=draftmaker.id, kind=evidence_kind
             )
 
-            draftregion = DraftRegion.objects.create(
-                region=[region for region in regions]
-            )
-            draftmaker.region.add(draftregion)
+            for region in regions:
+                DraftRegion.objects.get_or_create(region=region)
+                draftmaker.region.add(DraftRegion.objects.get(region=region).id)
 
-            draftcategory = DraftCategory.objects.create(
-                name=[category for category in categories]
-            )
-            draftmaker.category.add(draftcategory)
+            for name in categories:
+                DraftCategory.objects.get_or_create(name=name)
+                draftmaker.category.add(DraftCategory.objects.get(name=name).id)
 
             if DraftTour.objects.filter(kind=tour_kind).exists():
                 drafttour = DraftTour.objects.get(kind=tour_kind)
@@ -359,64 +282,134 @@ class MakerReviseView(View):
         try:
             user = request.user
 
-            maker = Maker.objects.get(user_id=user.id)
-            evidences = Evidence.objects.select_related("maker").filter(
-                maker__user_id=user.id
-            )
+            if Maker.objects.filter(user_id=user.id).exists():
+                maker = Maker.objects.get(user_id=user.id)
+                evidences = Evidence.objects.select_related("maker").filter(
+                    maker__user_id=user.id
+                )
 
-            result = {
-                "makername": maker.makername,
-                "makernickname": maker.makernickname,
-                "introduce": maker.introduce,
-                "evidence": [
-                    {
-                        "evidence_kind": evidence.kind,
-                        "evidence_image": base64.encodebytes(
-                            open(evidence.image.path, "rb").read()
-                        ).decode("utf-8"),
-                        "evidence_name": evidence.image.name,
-                        "evidence_url": evidence.image.url,
-                    }
-                    for evidence in evidences
-                    if evidence.image
-                ],
-                "sns": list(maker.sns_set.values_list("address", flat=True)),
-                "language": list(maker.language.values_list("Language", flat=True)),
-                "category": list(maker.category.values_list("name", flat=True)),
-                "region": list(maker.region.values_list("region", flat=True)),
-                "bank": maker.bank,
-                "account_number": maker.account_number,
-                "account_holder": maker.account_holder,
-                "productform": maker.productform,
-                "tour": list(maker.tour.values_list("kind", flat=True)),
-                "limit_people": Maker_tour.objects.get(maker_id=maker).limit_people,
-                "limit_load": Maker_tour.objects.get(maker_id=maker).limit_load,
-            }
+                result = {
+                    "id": maker.id,
+                    "makername": maker.makername,
+                    "makernickname": maker.makernickname,
+                    "introduce": maker.introduce,
+                    "evidence": [
+                        {
+                            "evidence_kind": evidence.kind,
+                            "evidence_image": base64.encodebytes(
+                                open(evidence.image.path, "rb").read()
+                            ).decode("utf-8"),
+                            "evidence_name": evidence.image.name,
+                            "evidence_url": evidence.image.url,
+                        }
+                        for evidence in evidences
+                        if evidence.image
+                    ],
+                    "sns": list(maker.sns_set.values_list("address", flat=True)),
+                    "language": list(maker.language.values_list("Language", flat=True)),
+                    "category": list(maker.category.values_list("name", flat=True)),
+                    "region": list(maker.region.values_list("region", flat=True)),
+                    "bank": maker.bank,
+                    "account_number": maker.account_number,
+                    "account_holder": maker.account_holder,
+                    "productform": maker.productform,
+                    "tour": list(maker.tour.values_list("kind", flat=True)),
+                }
 
-            if maker.profile:
-                result["profile"] = base64.encodebytes(
-                    open(maker.profile.path, "rb").read()
-                ).decode("utf-8")
-                result["profile_name"] = maker.profile.name
-                result["profile_url"] = maker.profile.url
+                if Maker_tour.objects.filter(maker_id=maker).exists():
+                    result["limit_people"] = Maker_tour.objects.get(
+                        maker_id=maker
+                    ).limit_people
+                    result["limit_load"] = Maker_tour.objects.get(
+                        maker_id=maker
+                    ).limit_load
 
-            if maker.idcard:
-                result["idcard"] = base64.encodebytes(
-                    open(maker.idcard.path, "rb").read()
-                ).decode("utf-8")
-                result["idcard_name"] = maker.idcard.name
-                result["idcard_url"] = maker.idcard.url
+                if maker.profile:
+                    result["profile"] = base64.encodebytes(
+                        open(maker.profile.path, "rb").read()
+                    ).decode("utf-8")
+                    result["profile_name"] = maker.profile.name
+                    result["profile_url"] = maker.profile.url
 
-            if maker.bankbook_image:
-                result["bankbook"] = base64.encodebytes(
-                    open(maker.bankbook_image.path, "rb").read()
-                ).decode("utf-8")
-                result["bankbook_name"] = maker.bankbook_image.name
-                result["bankbook_url"] = maker.bankbook_image.url
+                if maker.idcard:
+                    result["idcard"] = base64.encodebytes(
+                        open(maker.idcard.path, "rb").read()
+                    ).decode("utf-8")
+                    result["idcard_name"] = maker.idcard.name
+                    result["idcard_url"] = maker.idcard.url
+
+                if maker.bankbook_image:
+                    result["bankbook"] = base64.encodebytes(
+                        open(maker.bankbook_image.path, "rb").read()
+                    ).decode("utf-8")
+                    result["bankbook_name"] = maker.bankbook_image.name
+                    result["bankbook_url"] = maker.bankbook_image.url
+
+            else:
+                maker = DraftMaker.objects.get(user_id=user.id)
+                evidences = DraftEvidence.objects.select_related("draftmaker").filter(
+                    maker__user_id=user.id
+                )
+
+                result = {
+                    "id": maker.id,
+                    "makername": maker.makername,
+                    "makernickname": maker.makernickname,
+                    "introduce": maker.introduce,
+                    "evidence": [
+                        {
+                            "evidence_kind": evidence.kind,
+                            "evidence_image": base64.encodebytes(
+                                open(evidence.image.path, "rb").read()
+                            ).decode("utf-8"),
+                            "evidence_name": evidence.image.name,
+                            "evidence_url": evidence.image.url,
+                        }
+                        for evidence in evidences
+                        if evidence.image
+                    ],
+                    "sns": list(maker.draftsns_set.values_list("address", flat=True)),
+                    "language": list(maker.language.values_list("Language", flat=True)),
+                    "category": list(maker.category.values_list("name", flat=True)),
+                    "region": list(maker.region.values_list("region", flat=True)),
+                    "bank": maker.bank,
+                    "account_number": maker.account_number,
+                    "account_holder": maker.account_holder,
+                    "productform": maker.productform,
+                    "tour": list(maker.tour.values_list("kind", flat=True)),
+                }
+                if DraftMaker_Drafttour.objects.filter(draftmaker_id=maker).exists():
+                    result["limit_people"] = DraftMaker_Drafttour.objects.get(
+                        draftmaker_id=maker
+                    ).limit_people
+                    result["limit_load"] = DraftMaker_Drafttour.objects.get(
+                        draftmaker_id=maker
+                    ).limit_load
+
+                if maker.profile:
+                    result["profile"] = base64.encodebytes(
+                        open(maker.profile.path, "rb").read()
+                    ).decode("utf-8")
+                    result["profile_name"] = maker.profile.name
+                    result["profile_url"] = maker.profile.url
+
+                if maker.idcard:
+                    result["idcard"] = base64.encodebytes(
+                        open(maker.idcard.path, "rb").read()
+                    ).decode("utf-8")
+                    result["idcard_name"] = maker.idcard.name
+                    result["idcard_url"] = maker.idcard.url
+
+                if maker.bankbook_image:
+                    result["bankbook"] = base64.encodebytes(
+                        open(maker.bankbook_image.path, "rb").read()
+                    ).decode("utf-8")
+                    result["bankbook_name"] = maker.bankbook_image.name
+                    result["bankbook_url"] = maker.bankbook_image.url
 
             return JsonResponse({"MESSAGE": result}, status=200)
         except Maker.DoesNotExist:
-            return JsonResponse({"MESSAGE": "MAKERS DOES NOT EXISTS"}, status=404)
+            return JsonResponse({"MESSAGE": "MAKERS DOES NOT EXIST"}, status=404)
 
     @login_decorator
     @transaction.atomic
@@ -425,7 +418,7 @@ class MakerReviseView(View):
             user = request.user
             data = json.loads(request.POST["data"])
 
-            id = request.GET.get("id")
+            id = Maker.objects.get(user_id=user.id).id
             Maker.objects.get(id=id).delete()
 
             maker = Maker.objects.create(
@@ -446,7 +439,7 @@ class MakerReviseView(View):
                 for sns in data["sns"]:
                     Sns.objects.create(
                         maker_id=maker.id,
-                        address=sns["address"],
+                        address=sns,
                     )
 
             if data.get("evidence") and request.FILES.getlist("evidence"):
@@ -454,27 +447,23 @@ class MakerReviseView(View):
                     data["evidence"], request.FILES.getlist("evidence")
                 ):
                     Evidence.objects.create(
-                        kind=evidence["kind"], maker_id=maker.id, image=image
+                        kind=evidence, maker_id=maker.id, image=image
                     )
 
             if data.get("language"):
                 for language in data["language"]:
-                    Language.objects.get_or_create(Language=language["language"])
-                    maker.language.add(
-                        Language.objects.get(Language=language["language"]).id
-                    )
+                    Language.objects.get_or_create(Language=language)
+                    maker.language.add(Language.objects.get(Language=language).id)
 
             if data.get("region"):
                 for region in data["region"]:
-                    Region.objects.get_or_create(region=region["region"])
-                    maker.region.add(Region.objects.get(region=region["region"]).id)
+                    Region.objects.get_or_create(region=region)
+                    maker.region.add(Region.objects.get(region=region).id)
 
             if data.get("category"):
                 for category in data["category"]:
-                    Category.objects.get_or_create(name=category["category"])
-                    maker.category.add(
-                        Category.objects.get(name=category["category"]).id
-                    )
+                    Category.objects.get_or_create(name=category)
+                    maker.category.add(Category.objects.get(name=category).id)
 
             if data.get("tour") == "차량투어":
                 Maker_tour.objects.create(
