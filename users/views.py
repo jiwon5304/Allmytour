@@ -218,7 +218,7 @@ class MypageView(View):
             "password": user.password,
             "is_maker": user.is_maker,
             "agree_service": user.agree_service,
-            "agree_maketing": user.agree_marketing,
+            "agree_maketing": user.agree_maketing,
         }
 
         return JsonResponse({"Result": result}, status=200)
