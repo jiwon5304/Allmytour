@@ -74,13 +74,6 @@ Allmytour 기업협업 프로젝트
 | Method | endpoint | Request Header | Request Body | Remark |
 |:------:|-------------|-----|------|--------|
 |POST|/user||name|회원가입 기능|
-|POST|/token||name, password|로그인 기능|
-|POST|/transaction|access_token|account_number, kind, amount, etc|입, 출금 기능|
-|GET|/transaction/\<int\>|access_token||거래 내역 조회 기능(전체리스트/개별내역)|
-|GET|/transaction?pariod=\<int\>&kind\<str\>|access_token||거래 내역 조회 기능(1,3,7,30,90일 별 + 입/출금)|
-|GET|/transaction?start=\<str\>&end=\<str\>&kind\<str\>|access_token||거래 내역 조회 기능(기간설정 + 입/출금)|
-|GET|/transaction?year=\<str\>&month=\<str\>&kind\<str\>|access_token||거래 내역 조회 기능(특정 년월 별 + 입/출금|
-
 |POST|/makers/apply|access_token||makers 지원하기 기능(정보, 파일 등 업로드)|
 |POST|/makers/draft|access_token||makers 임시저장 기능|
 |POST|/makers/revise|access_token||makers 수정하기 기능|
