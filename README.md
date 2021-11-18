@@ -4,8 +4,8 @@ Allmytour 기업협업 프로젝트
 ## Members
 |이름   |Github                   |Position|
 |-------|-------------------------|--------------------|
-|김태수 |[orosy]https://github.com/orosy|  FE     |
-|김영호 |[YOUNGHO8762]   https://github.com/YOUNGHO8762 |   FE  |
+|김태수 |[orosy](https://github.com/orosy)|  FE     |
+|김영호 |[YOUNGHO8762](https://github.com/YOUNGHO8762) |   FE  |
 |고준영 |[jay95ko](https://github.com/jay95ko)     | BE   |
 |윤현묵 |[fall031-muk](https://github.com/fall031-muk)| BE   |
 |박지원 |                        | BE   |
