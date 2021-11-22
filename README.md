@@ -1,15 +1,15 @@
 # Allmytour Makers
 Allmytour 기업협업 프로젝트
+
+- [시연영상](https://www.youtube.com/watch?v=VA8rSx0cG7Q&ab_channel=%EA%B9%80%EC%98%81%ED%98%B8)
   
 ## Members
 |이름   |Github                   |Position|
 |-------|-------------------------|--------------------|
-|김태수 |[orosy](https://github.com/orosy)|  FE     |
-|김영호 |[YOUNGHO8762](https://github.com/YOUNGHO8762) |   FE  |
-|고준영 |[jay95ko](https://github.com/jay95ko)     | BE   |
-|윤현묵 |[fall031-muk](https://github.com/fall031-muk)| BE   |
-|박지원 |[jiwon5304](https://github.com/jiwon5304) | BE   |
-|최현수 |[filola](https://github.com/filola) | BE |
+|고준영 |[jay95ko](https://github.com/jay95ko)     | 회원가입/mypage   |
+|윤현묵 |[fall031-muk](https://github.com/fall031-muk)| makers 지원하기/임시저장   |
+|박지원 |[jiwon5304](https://github.com/jiwon5304) | 로그인/비밀번호 찾기   |
+|최현수 |[filola](https://github.com/filola) | makers/수정하기 |
 
 ## 프로젝트 내용
 회사 측의 로컬 여행 가이드가 직접 여행 상품을 등록하는 웹 어플리케이션 개발 프로젝트
