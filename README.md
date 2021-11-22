@@ -45,11 +45,18 @@ Allmytour 기업협업 프로젝트
     - 이미지 파일 업로드
   
 ## 구현 기능
-### 회원가입/로그인
-- 
-- 
-- 
-- 
+### 회원가입
+- 이름, 비밀번호, 이메일, 핸드폰번호, 마케팅 및 서비스 동의 항목을 입력받아 회원가입을 진행
+- 이메일과 비밀번호는 정규표현식을 사용한 유효성 검사를 진행
+- 비밀번호는 암호화를 적용하여 데이터베이스에 저장
+
+### 로그인
+- 로그인 유지값을 True or False로 받아 사용자가 로그인 유지를 요청시 30일동안 토큰값이 유지되도록 구현하였고, 기본적으로는 2시간으로 설정
+
+### 비밀번호 찾기
+- 이메일 인증을 통한 비밀번호 찾기 기능 구현
+- 입력받은 이메일 정보로 10000~99999의 임의의 숫자를 발송하여 데이터베이스에 저장된 인증번호와 동일한지 확인
+- 인증번호 확인이 되면 새로운 비밀
 
 ### maksers 지원하기/임시저장
 - 필수 정보와 추가 정보를 입력받아 makers 지원하기(지원하기 시 필수 입력 값 미입력 시 지원할 수 없음)
@@ -73,7 +80,12 @@ Allmytour 기업협업 프로젝트
 
 | Method | endpoint | Request Header | Request Body | Remark |
 |:------:|-------------|-----|------|--------|
-|POST|/user||name|회원가입 기능|
+|POST|/users|access_token||마이페이지 기능|
+|POST|/users/login||email,password,token_status|로그인 기능|
+|POST|/users/signup||name,email,password,phone,agree(service,marketing)|회원가입 기능|
+|POST|/users/sendemail||email|인증번호 이메일 전송 기능|
+|POST|/users/auth||email,auth_number|인증번호 확인 기능|
+|POST|/users/newpw|access_token|newpw|새로운 비민번호 설정 기능|
 |POST|/makers/apply|access_token||makers 지원하기 기능(정보, 파일 등 업로드)|
 |POST|/makers/draft|access_token||makers 임시저장 기능|
 |POST|/makers/revise|access_token||makers 수정하기 기능|
