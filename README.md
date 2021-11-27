@@ -7,8 +7,8 @@ Allmytour 기업협업 프로젝트
 |이름   |Github                   |Position|
 |-------|-------------------------|--------------------|
 |고준영 |[jay95ko](https://github.com/jay95ko)     | 회원가입/mypage   |
-|윤현묵 |[fall031-muk](https://github.com/fall031-muk)| makers 지원하기/임시저장   |
 |박지원 |[jiwon5304](https://github.com/jiwon5304) | 로그인/비밀번호 찾기   |
+|윤현묵 |[fall031-muk](https://github.com/fall031-muk)| makers 지원하기/임시저장   |
 |최현수 |[filola](https://github.com/filola) | makers/수정하기 |
 
 ## 프로젝트 내용
